@@ -1,6 +1,10 @@
 #include "zmessage_codec.h"
 
+#ifdef WIN32
+#include <winsock.h>
+#else // WIN32
 #include <arpa/inet.h>
+#endif // WIN32
 #include <string.h>
 #include <assert.h>
 #include <stdlib.h>
@@ -17,14 +21,14 @@ z_encode_header(struct z_header *val, char *buf, uint32_t buf_len)
   /* fixed values */
   val->syn[0] = 0xFE;
   val->syn[1] = 0xFD;
-  
+
   ENCODE_WITH_METHOD(z_encode_byte, val->syn[0], buf, buf_len, rv);
   ENCODE_WITH_METHOD(z_encode_byte, val->syn[1], buf, buf_len, rv);
-  
+
   ENCODE_WITH_METHOD(z_encode_integer32, val->len, buf, buf_len, rv);
   ENCODE_WITH_METHOD(z_encode_integer16, val->cmd, buf, buf_len, rv);
   ENCODE_WITH_METHOD(z_encode_integer32, val->seq, buf, buf_len, rv);
-  
+
   return orig_len - buf_len;
 }
 
@@ -42,11 +46,11 @@ z_decode_header(struct z_header *val, char *buf, uint32_t buf_len)
   if (val->syn[0] != 0xFE || val->syn[1] != 0xFD) {
     return -1;
   }
-  
+
   DECODE_WITH_METHOD(z_decode_integer32, (uint32_t*)&val->len, buf, buf_len, rv);
   DECODE_WITH_METHOD(z_decode_integer16, &val->cmd, buf, buf_len, rv);
   DECODE_WITH_METHOD(z_decode_integer32, &val->seq, buf, buf_len, rv);
-  
+
   return orig_len - buf_len;
 }
 
@@ -99,7 +103,7 @@ uint32_t
 z_getlen_dev_info(const struct z_dev_info *val)
 {
   assert(val != NULL);
-  
+
   uint32_t len = 0;
 
   len += z_getlen_integer16();
@@ -148,7 +152,7 @@ uint32_t
 z_getlen_dev_info_list(const struct z_dev_info_list *val)
 {
   assert(val != NULL);
-  
+
   uint32_t len = 0;
   int i;
 
@@ -169,7 +173,7 @@ z_encode_query_dev_req(struct z_query_dev_req *val, char *buf, uint32_t buf_len)
   int rv;
 
   assert(val != NULL);
-  
+
   val->hdr.len = 0;
   val->hdr.len += z_getlen_string(val->uid);
   val->hdr.len += z_getlen_integer16(val->dev_id);
@@ -177,7 +181,7 @@ z_encode_query_dev_req(struct z_query_dev_req *val, char *buf, uint32_t buf_len)
 	val->hdr.cmd = (uint16_t)ID_GET_DEV_REQ;
 
   ENCODE_WITH_METHOD(z_encode_header,    &(val->hdr), buf, buf_len, rv);
-  
+
   ENCODE_WITH_METHOD(z_encode_string,    val->uid,    buf, buf_len, rv);
   ENCODE_WITH_METHOD(z_encode_integer16, val->dev_id, buf, buf_len, rv);
 
@@ -191,13 +195,13 @@ z_decode_query_dev_req(struct z_query_dev_req *val, char *buf, uint32_t buf_len)
   int rv;
 
   assert(val != NULL);
-  
+
   val->hdr.len = 0;
   val->hdr.len += z_getlen_string(val->uid);
   val->hdr.len += z_getlen_integer16(val->dev_id);
 
   DECODE_WITH_METHOD(z_decode_header, &(val->hdr), buf, buf_len, rv);
-  
+
   DECODE_WITH_METHOD(z_decode_string, &val->uid, buf, buf_len, rv);
   DECODE_WITH_METHOD(z_decode_integer16, &val->dev_id, buf, buf_len, rv);
 
@@ -218,7 +222,7 @@ z_encode_query_dev_rsp(struct z_query_dev_rsp *val, char *buf, uint32_t buf_len)
   // val->hdr.len += z_getlen_dev_info_list(&(val->info_list));
 
   ENCODE_WITH_METHOD(z_encode_header, &(val->hdr), buf, buf_len, rv);
-  
+
   ENCODE_WITH_METHOD(z_encode_integer16, val->code, buf, buf_len, rv);
   ENCODE_WITH_METHOD(z_encode_string, val->reason, buf, buf_len, rv);
   ENCODE_WITH_METHOD(z_encode_dev_info_list, &(val->info_list), buf, buf_len, rv);
@@ -238,7 +242,7 @@ z_decode_query_dev_rsp(struct z_query_dev_rsp *val, char *buf, uint32_t buf_len)
   // val->hdr.len += z_getlen_dev_info_list(&(val->info_list));
 
   DECODE_WITH_METHOD(z_decode_header, &(val->hdr), buf, buf_len, rv);
-  
+
   DECODE_WITH_METHOD(z_decode_integer16, &val->code, buf, buf_len, rv);
   DECODE_WITH_METHOD(z_decode_string, &val->reason, buf, buf_len, rv);
   DECODE_WITH_METHOD(z_decode_dev_info_list, &(val->info_list), buf, buf_len, rv);

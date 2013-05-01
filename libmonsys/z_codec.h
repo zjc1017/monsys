@@ -1,6 +1,6 @@
 #ifndef _Z_CODEC_H__
 #define _Z_CODEC_H__
-
+//#include "platform.h"
 #include <stdint.h>
 
 #ifdef __cplusplus
@@ -48,6 +48,7 @@ uint32_t z_getlen_integer16();
 int z_encode_integer32(uint32_t val, char *buf, uint32_t buf_len);
 int z_decode_integer32(uint32_t *val, char *buf, uint32_t buf_len);
 uint32_t z_getlen_integer32();
+
 
 
 #ifdef __cplusplus

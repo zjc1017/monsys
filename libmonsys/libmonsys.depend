@@ -1,0 +1,51 @@
+# depslib dependency file v1.0
+1367333812 source:f:\bee\monsys\libmonsys\z_codec.c
+	"z_codec.h"
+	<stdlib.h>
+	<string.h>
+	<winsock.h>
+
+1367331002 f:\bee\monsys\libmonsys\z_codec.h
+	<stdint.h>
+
+1367339144 source:f:\bee\monsys\libmonsys\zb_msg.c
+	"zb_msg.h"
+
+1367331002 f:\bee\monsys\libmonsys\zb_msg.h
+	<stdint.h>
+	"z_codec.h"
+
+1365248625 source:f:\bee\monsys\libmonsys\zlog.c
+	"zlog.h"
+	<stdio.h>
+
+1365248625 f:\bee\monsys\libmonsys\zlog.h
+	<stdint.h>
+
+1367340248 source:f:\bee\monsys\libmonsys\main.c
+	<stdio.h>
+	<stdint.h>
+	<string.h>
+	<stdlib.h>
+	<assert.h>
+	<winsock.h>
+	<arpa/inet.h>
+	"zlog.h"
+	"zmessage_codec.h"
+	"zb_msg.h"
+
+1365248625 f:\bee\monsys\libmonsys\zmessage_codec.h
+	"zmessage.h"
+	"z_codec.h"
+
+1365248625 f:\bee\monsys\libmonsys\zmessage.h
+	<stdint.h>
+
+1365249571 source:f:\bee\monsys\libmonsys\zmessage_codec.c
+	"zmessage_codec.h"
+	<winsock.h>
+	<arpa/inet.h>
+	<string.h>
+	<assert.h>
+	<stdlib.h>
+

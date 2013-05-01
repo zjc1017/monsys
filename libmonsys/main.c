@@ -5,12 +5,18 @@
 #include <assert.h>
 
 /* for htons/htonl/ntohs/ntohl */
+#ifdef WIN32
+#include <winsock.h>
+#else // WIN32
 #include <arpa/inet.h>
+#endif // WIN32
 
 #include "zlog.h"
 #include "zmessage_codec.h"
+#include "zb_msg.h"
 
 ///////////////////////////////////////
+
 
 int
 test_compare_header(const struct z_header *hdr1,
@@ -50,7 +56,7 @@ int test_query_req()
 {
   printf("-------------------------------------------\n");
   printf("test_query_req()\n");
-  
+
   struct z_query_dev_req msg1, msg2;
   int rv1, rv2;
   char buf1[512]; // , buf2[512];
@@ -63,7 +69,7 @@ int test_query_req()
     msg1.hdr.seq = 0x7890;
     msg1.uid = "User ID";
     msg1.dev_id = 0x4444;
-    
+
     rv1 = z_encode_query_dev_req(&msg1, buf1, sizeof(buf1));
     if (rv1 < 0) {
       return rv1;
@@ -85,7 +91,7 @@ int test_query_req()
   // compare
   {
     printf("comparing...\n");
-    
+
     // header
     assert(0 == test_compare_header(&msg1.hdr, &msg2.hdr));
 
@@ -102,7 +108,7 @@ int test_query_rsp()
 {
   printf("-------------------------------------------\n");
   printf("test_query_rsp()\n");
-  
+
   struct z_query_dev_rsp msg1, msg2;
   char buf1[512];
   int rv1, rv2;
@@ -110,11 +116,11 @@ int test_query_rsp()
   // encode
   {
     printf("encoding...\n");
-    
+
     msg1.hdr.len = 0x1111;
     msg1.hdr.cmd = 0x2222;
     msg1.hdr.seq = 0x3333;
-  
+
     msg1.code = 0x4444;
     msg1.reason = "Greate.";
 
@@ -164,20 +170,65 @@ int test_query_rsp()
   return 0;
 }
 
+int test_zjc_msg()
+{
+  char buf[512];
+
+  struct zb_get_req msg1;
+
+  int rv;
+
+  //trace_bin(buf, rv);
+  buf[0]=0xFF;
+  buf[1]=0x00;
+  buf[2]=0x01;
+  buf[3]=0x02;
+  buf[4]=0x00;
+  printf("Original data:\n");
+  trace_bin(buf, 5);
+  printf("Decode result:\n");
+  rv = zb_decode_get_req(&msg1, buf, sizeof(buf));
+  printf("Encode result:\n");
+  buf[0]=0x00;
+  buf[1]=0x00;
+  buf[2]=0x00;
+  buf[3]=0x00;
+  buf[4]=0x00;
+
+  rv = zb_encode_get_req(&msg1, buf, sizeof(buf));
+  trace_bin(buf,5);
+  // trace_bin(&msg1, 9);
+  //printf("Size of buf is:\n");
+  printf("Size of buf is: %d\n",sizeof(buf));
+
+  if (rv <= 0) {
+    printf("failed to encode get_req\n");
+    return 1;
+  }
+  assert((unsigned char)buf[0] == 0xFF);
+  assert((unsigned char)buf[3] == (unsigned char)ZB_ID_GET_REQ);
+
+  return 0;
+ }
+
 int main(int argc, char *argv[])
 {
-  printf("Just a test.\n");
 
-  if (test_query_req() < 0) {
-    printf("failed for test_query_req()\n");
+//  if (test_query_req() < 0) {
+//    printf("failed for test_query_req()\n");
+//    return -1;
+//  }
+//
+//  if (test_query_rsp() < 0) {
+//    printf("failed for test_query_rsp()\n");
+//    return -1;
+//  }
+  printf("It is just a test\n");
+  if (test_zjc_msg() != 0) {
+    printf("Failed to test zhangjuncheng message.\n");
     return -1;
   }
-  
-  if (test_query_rsp() < 0) {
-    printf("failed for test_query_rsp()\n");
-    return -1;
-  }
-  
+
   return 0;
 }
 
