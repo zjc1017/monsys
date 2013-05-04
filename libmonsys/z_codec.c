@@ -1,7 +1,14 @@
+
 #include "z_codec.h"
 
 #include <stdlib.h>
 #include <string.h>
+
+#ifdef WIN32
+#include <winsock.h>
+#else // WIN32
+// #include <arpa/inet.h>
+#endif // WIN32
 
 // string
 int
@@ -37,7 +44,7 @@ z_decode_string(char **val, char *buf, uint32_t buf_len)
   *val = malloc(str_len + 1); // ends with '\0'
 
   memcpy(*val, buf, str_len);
-  
+
   (*val)[str_len] = 0x00;
 
   return str_len + 1;
@@ -73,7 +80,6 @@ z_decode_byte(char *val, char *buf, uint32_t buf_len)
 
   return 1;
 }
-
 uint32_t
 z_getlen_byte()
 {
@@ -103,7 +109,7 @@ z_decode_integer16(uint16_t *val, char *buf, uint32_t buf_len)
   }
 
   memcpy(val, buf, 2);
-  
+
   *val = ntohs(*val);
 
   return 2;
@@ -138,7 +144,7 @@ z_decode_integer32(uint32_t *val, char *buf, uint32_t buf_len)
   }
 
   memcpy(val, buf, 4);
-  
+
   *val = ntohl(*val);
 
   return 4;

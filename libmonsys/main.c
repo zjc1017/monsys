@@ -15,7 +15,31 @@
 #include "zmessage_codec.h"
 #include "zb_msg.h"
 
-///////////////////////////////////////
+int
+test_zb_decode_set_req()
+{
+  int rv;
+  struct zb_set_req msg1;
+  uint8_t buf[14];
+  buf[0] = 0xFF;
+  buf[1] = 0x00;
+  buf[2] = 0x0A;
+  buf[3] = 0x03;
+  buf[4] = 0x03;
+  buf[5] = 0x03;
+  buf[6] = 0x00;
+  buf[7] = 0x05;
+  buf[8] = 0x06;
+  buf[9] = 0x00;
+  buf[10] = 0x09;
+   buf[11] = 0x04;
+  buf[12] = 0x00;
+  buf[13] = 0x07;
+////
+  rv = zb_decode_set_req(&msg1, buf, sizeof(buf));
+  return 0;
+  //trace_bin(9);////
+}///////////////////////
 
 
 int
@@ -177,13 +201,16 @@ int test_zjc_msg()
   struct zb_get_req msg1;
 
   int rv;
+  //test_query_req();
 
   //trace_bin(buf, rv);
   buf[0]=0xFF;
   buf[1]=0x00;
-  buf[2]=0x01;
+  buf[2]=0x03;
   buf[3]=0x02;
-  buf[4]=0x00;
+  buf[4]=0x02;
+  buf[5]=0x01;
+  buf[6]=0x02;
   printf("Original data:\n");
   trace_bin(buf, 5);
   printf("Decode result:\n");
@@ -194,7 +221,6 @@ int test_zjc_msg()
   buf[2]=0x00;
   buf[3]=0x00;
   buf[4]=0x00;
-
   rv = zb_encode_get_req(&msg1, buf, sizeof(buf));
   trace_bin(buf,5);
   // trace_bin(&msg1, 9);
@@ -207,7 +233,6 @@ int test_zjc_msg()
   }
   assert((unsigned char)buf[0] == 0xFF);
   assert((unsigned char)buf[3] == (unsigned char)ZB_ID_GET_REQ);
-
   return 0;
  }
 
@@ -224,10 +249,16 @@ int main(int argc, char *argv[])
 //    return -1;
 //  }
   printf("It is just a test\n");
-  if (test_zjc_msg() != 0) {
+  //if (test_zjc_msg() != 0) {
+   // printf("Failed to test zhangjuncheng message.\n");
+    //return -1;
+  //}
+  if(test_zb_decode_set_req()!=0){
     printf("Failed to test zhangjuncheng message.\n");
     return -1;
   }
+
+
 
   return 0;
 }

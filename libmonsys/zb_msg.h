@@ -1,7 +1,9 @@
 #ifndef _ZB_MSG_H__
 #define _ZB_MSG_H__
-#include <stdint.h>
+// #include <stdint.h>
 #include "z_codec.h"
+
+
 
 #ifdef __cplusplus
 extern "C" {
@@ -77,6 +79,13 @@ int zb_encode_get_req(struct zb_get_req *msg, char *buf, uint32_t buf_len);
 int zb_decode_get_req(struct zb_get_req *val, char *buf, uint32_t buf_len);
 uint32_t zb_getlen_get_req(struct zb_get_req *val);
 
+int zb_encode_get_rsp(struct zb_get_rsp *val, char *buf, uint32_t buf_len);
+
+int zb_encode_set_req(struct zb_set_req *msg,char *buf,uint32_t buf_len);
+int zb_decode_set_rsp(struct zb_set_rsp *val,char *buf,uint32_t buf_len);
+//int test_zb_decode_set_req();
+
+//int zb_test(uint8_t *serial_data,uint8_t value,uint8_t len);
 
 #ifdef __cplusplus
 }
